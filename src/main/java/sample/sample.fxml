@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <bottom>
+      <AnchorPane prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="buttonStart" mnemonicParsing="false" onAction="#start" prefWidth="70.0" text="Start" AnchorPane.rightAnchor="152.0" />
+            <Button fx:id="buttonStop" mnemonicParsing="false" onAction="#stop" prefWidth="70.0" text="Stop" AnchorPane.leftAnchor="152.0" />
+         </children>
+      </AnchorPane>
+   </bottom>
+   <center>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <AnchorPane prefHeight="140.0" prefWidth="300.0">
+               <children>
+                  <TextField fx:id="textFieldX1" layoutX="25.0" layoutY="40.0" prefWidth="55.0" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="40.0" />
+                  <TextField fx:id="textFieldY1" layoutX="25.0" layoutY="70.0" prefWidth="55.0" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="70.0" />
+                  <Label layoutX="10.0" layoutY="45.0" text="X1:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="45.0" />
+                  <Label layoutX="10.0" layoutY="75.0" text="Y1:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="75.0" />
+                  <Label layoutX="178.0" layoutY="43.0" text="Liczba akcji: " AnchorPane.leftAnchor="180.0" AnchorPane.topAnchor="45.0" />
+                  <Label layoutX="178.0" layoutY="73.0" text="Okres akcji:" AnchorPane.leftAnchor="180.0" AnchorPane.topAnchor="75.0" />
+                  <TextField fx:id="textFieldActionsNumber1" layoutX="243.0" layoutY="38.0" prefWidth="70.0" AnchorPane.leftAnchor="245.0" AnchorPane.topAnchor="38.0" />
+                  <TextField fx:id="textFieldActionsPeriod1" layoutX="243.0" layoutY="68.0" prefWidth="70.0" AnchorPane.leftAnchor="245.0" AnchorPane.topAnchor="68.0" />
+                  <CheckBox fx:id="checkboxActionStart1" layoutX="344.0" layoutY="110.0" mnemonicParsing="false" text="Uruchom" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="110.0" />
+                  <Label layoutX="320.0" layoutY="45.0" text="Klawisz:" AnchorPane.leftAnchor="320.0" AnchorPane.topAnchor="45.0" />
+                  <Label fx:id="labelKey1" layoutX="288.0" layoutY="14.0" prefHeight="17.0" prefWidth="5.0" AnchorPane.leftAnchor="320.0" AnchorPane.topAnchor="75.0" />
+                  <ComboBox layoutX="25.0" layoutY="14.0" prefWidth="95.0" promptText="Akcja" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                  <TextField fx:id="textFieldX11" layoutX="103.0" layoutY="41.0" prefWidth="55.0" AnchorPane.leftAnchor="110.0" AnchorPane.topAnchor="40.0" />
+                  <TextField fx:id="textFieldY11" layoutX="103.0" layoutY="71.0" prefWidth="55.0" AnchorPane.leftAnchor="110.0" AnchorPane.topAnchor="70.0" />
+                  <Label layoutX="88.0" layoutY="46.0" text="X2:" AnchorPane.leftAnchor="90.0" AnchorPane.topAnchor="45.0" />
+                  <Label layoutX="88.0" layoutY="76.0" text="Y2:" AnchorPane.leftAnchor="90.0" AnchorPane.topAnchor="75.0" />
+                  <ColorPicker layoutX="291.0" layoutY="10.0" prefWidth="100.0" AnchorPane.leftAnchor="210.0" AnchorPane.topAnchor="10.0" />
+                  <ComboBox layoutX="119.0" layoutY="10.0" prefWidth="95.0" promptText="Trigger" AnchorPane.leftAnchor="110.0" AnchorPane.topAnchor="10.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="110.0" prefWidth="300.0">
+               <children>
+                  <TextField fx:id="textFieldX2" layoutX="25.0" layoutY="10.0" prefWidth="50.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="10.0" />
+                  <TextField fx:id="textFieldY2" layoutX="25.0" layoutY="40.0" prefWidth="50.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="40.0" />
+                  <Label layoutX="10.0" layoutY="15.0" text="X:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="15.0" />
+                  <Label layoutX="10.0" layoutY="45.0" text="Y:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="45.0" />
+                  <Label layoutX="86.0" layoutY="14.0" text="Liczba akcji: " AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="15.0" />
+                  <Label layoutX="86.0" layoutY="45.0" text="Okres akcji:" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="45.0" />
+                  <TextField fx:id="textFieldActionsNumber2" layoutX="145.0" layoutY="10.0" prefWidth="50.0" AnchorPane.leftAnchor="150.0" AnchorPane.topAnchor="10.0" />
+                  <TextField fx:id="textFieldActionsPeriod2" layoutX="151.0" layoutY="40.0" prefWidth="50.0" AnchorPane.leftAnchor="150.0" AnchorPane.topAnchor="40.0" />
+                  <Button fx:id="buttonKey2" layoutX="145.0" layoutY="75.0" mnemonicParsing="false" text="Klawiatura" AnchorPane.leftAnchor="150.0" AnchorPane.topAnchor="75.0" />
+                  <CheckBox fx:id="checkboxActionStart2" layoutX="244.0" layoutY="79.0" mnemonicParsing="false" text="Start" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="79.0" />
+                  <Label layoutX="210.0" layoutY="15.0" text="Klawisz:" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="15.0" />
+                  <Label fx:id="labelKey2" layoutX="253.0" layoutY="14.0" AnchorPane.leftAnchor="210.0" AnchorPane.topAnchor="45.0" />
+                  <Button fx:id="buttonMouse2" layoutX="92.0" layoutY="75.0" mnemonicParsing="false" text="Mysz" AnchorPane.rightAnchor="155.0" AnchorPane.topAnchor="75.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane layoutX="10.0" layoutY="120.0" prefHeight="110.0" prefWidth="300.0">
+               <children>
+                  <TextField fx:id="textFieldX3" layoutX="25.0" layoutY="10.0" prefWidth="50.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="10.0" />
+                  <TextField fx:id="textFieldY3" layoutX="25.0" layoutY="40.0" prefWidth="50.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="40.0" />
+                  <Label layoutX="10.0" layoutY="15.0" text="X:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="15.0" />
+                  <Label layoutX="10.0" layoutY="45.0" text="Y:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="45.0" />
+                  <Label layoutX="86.0" layoutY="14.0" text="Liczba akcji: " AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="15.0" />
+                  <Label layoutX="86.0" layoutY="45.0" text="Okres akcji:" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="45.0" />
+                  <TextField fx:id="textFieldActionsNumber3" layoutX="145.0" layoutY="10.0" prefWidth="50.0" AnchorPane.leftAnchor="150.0" AnchorPane.topAnchor="10.0" />
+                  <TextField fx:id="textFieldActionsPeriod3" layoutX="151.0" layoutY="40.0" prefWidth="50.0" AnchorPane.leftAnchor="150.0" AnchorPane.topAnchor="40.0" />
+                  <Button fx:id="buttonKey3" layoutX="145.0" layoutY="75.0" mnemonicParsing="false" text="Klawiatura" AnchorPane.leftAnchor="150.0" AnchorPane.topAnchor="75.0" />
+                  <CheckBox fx:id="checkboxActionStart3" layoutX="244.0" layoutY="79.0" mnemonicParsing="false" text="Start" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="79.0" />
+                  <Label layoutX="210.0" layoutY="15.0" text="Klawisz:" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="15.0" />
+                  <Label fx:id="labelKey3" layoutX="253.0" layoutY="14.0" AnchorPane.leftAnchor="210.0" AnchorPane.topAnchor="45.0" />
+                  <Button fx:id="buttonMouse3" layoutX="94.0" layoutY="76.0" mnemonicParsing="false" text="Mysz" AnchorPane.rightAnchor="155.0" AnchorPane.topAnchor="75.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane layoutX="10.0" layoutY="230.0" prefHeight="110.0" prefWidth="300.0">
+               <children>
+                  <TextField fx:id="textFieldX4" layoutX="25.0" layoutY="10.0" prefWidth="50.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="10.0" />
+                  <TextField fx:id="textFieldY4" layoutX="25.0" layoutY="40.0" prefWidth="50.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="40.0" />
+                  <Label layoutX="10.0" layoutY="15.0" text="X:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="15.0" />
+                  <Label layoutX="10.0" layoutY="45.0" text="Y:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="45.0" />
+                  <Label layoutX="86.0" layoutY="14.0" text="Liczba akcji: " AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="15.0" />
+                  <Label layoutX="86.0" layoutY="45.0" text="Okres akcji:" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="45.0" />
+                  <TextField fx:id="textFieldActionsNumber4" layoutX="145.0" layoutY="10.0" prefWidth="50.0" AnchorPane.leftAnchor="150.0" AnchorPane.topAnchor="10.0" />
+                  <TextField fx:id="textFieldActionsPeriod4" layoutX="151.0" layoutY="40.0" prefWidth="50.0" AnchorPane.leftAnchor="150.0" AnchorPane.topAnchor="40.0" />
+                  <Button fx:id="buttonKey4" layoutX="145.0" layoutY="75.0" mnemonicParsing="false" text="Klawiatura" AnchorPane.leftAnchor="150.0" AnchorPane.topAnchor="75.0" />
+                  <CheckBox fx:id="checkboxActionStart4" layoutX="244.0" layoutY="79.0" mnemonicParsing="false" text="Start" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="79.0" />
+                  <Label layoutX="210.0" layoutY="15.0" text="Klawisz:" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="15.0" />
+                  <Label fx:id="labelKey4" layoutX="253.0" layoutY="14.0" AnchorPane.leftAnchor="210.0" AnchorPane.topAnchor="45.0" />
+                  <Button fx:id="buttonMouse4" layoutX="85.0" layoutY="66.0" mnemonicParsing="false" text="Mysz" AnchorPane.rightAnchor="155.0" AnchorPane.topAnchor="75.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane layoutX="10.0" layoutY="340.0" prefHeight="110.0" prefWidth="300.0">
+               <children>
+                  <TextField fx:id="textFieldX5" layoutX="25.0" layoutY="10.0" prefWidth="50.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="10.0" />
+                  <TextField fx:id="textFieldY5" layoutX="25.0" layoutY="40.0" prefWidth="50.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="40.0" />
+                  <Label layoutX="10.0" layoutY="15.0" text="X:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="15.0" />
+                  <Label layoutX="10.0" layoutY="45.0" text="Y:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="45.0" />
+                  <Label layoutX="86.0" layoutY="14.0" text="Liczba akcji: " AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="15.0" />
+                  <Label layoutX="86.0" layoutY="45.0" text="Okres akcji:" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="45.0" />
+                  <TextField fx:id="textFieldActionsNumber5" layoutX="145.0" layoutY="10.0" prefWidth="50.0" AnchorPane.leftAnchor="150.0" AnchorPane.topAnchor="10.0" />
+                  <TextField fx:id="textFieldActionsPeriod5" layoutX="151.0" layoutY="40.0" prefWidth="50.0" AnchorPane.leftAnchor="150.0" AnchorPane.topAnchor="40.0" />
+                  <Button fx:id="buttonKey5" layoutX="145.0" layoutY="75.0" mnemonicParsing="false" text="Klawiatura" AnchorPane.leftAnchor="150.0" AnchorPane.topAnchor="75.0" />
+                  <CheckBox fx:id="checkboxActionStart5" layoutX="244.0" layoutY="79.0" mnemonicParsing="false" text="Start" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="79.0" />
+                  <Label layoutX="210.0" layoutY="15.0" text="Klawisz:" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="15.0" />
+                  <Label fx:id="labelKey5" layoutX="253.0" layoutY="14.0" AnchorPane.leftAnchor="210.0" AnchorPane.topAnchor="45.0" />
+                  <Button fx:id="buttonMouse5" layoutX="92.0" layoutY="75.0" mnemonicParsing="false" text="Mysz" AnchorPane.rightAnchor="155.0" AnchorPane.topAnchor="75.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
