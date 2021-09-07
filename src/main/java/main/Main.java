@@ -1,13 +1,14 @@
-package sample;
+package main;
 
+import controllers.MainWindowController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
 
@@ -20,9 +21,12 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Twoja stararara");
-        primaryStage.setScene(new Scene(root, 400, 600));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainWindow.fxml"));
+        Parent root = loader.load();
+        MainWindowController controller = loader.getController();
+        controller.setStage(primaryStage);
+        primaryStage.setTitle("Auto clicker");
+        primaryStage.setScene(new Scene(root, 416, 600));
         primaryStage.setResizable(false);
         primaryStage.show();
     }
@@ -38,7 +42,6 @@ public class Main extends Application {
 
     public void saveImage(){
         Platform.runLater(() -> {
-
             try {
                 BufferedImage imageToSearch = ImageIO.read(getClass().getResource("/Czarowana.png"));
                 int firstPixelValue = imageToSearch.getRGB(0, 0);
@@ -78,8 +81,6 @@ public class Main extends Application {
                         }
                     }
                 }
-
-                System.out.println(imageFound + " " + numberOfPixelsToFind + " ");
             } catch (IOException e) {
                 e.printStackTrace();
             }

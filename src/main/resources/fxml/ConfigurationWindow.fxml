@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="250.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ConfigurationWindowController">
+   <children>
+      <AnchorPane fx:id="anchorPanePixelColor" prefHeight="120.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="55.0">
+         <children>
+            <Label text="X:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
+            <Label text="Y:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="35.0" />
+            <TextField fx:id="textFieldColorPixelX" layoutX="26.0" layoutY="-4.0" prefWidth="75.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="0.0" />
+            <TextField fx:id="textFieldColorPixelY" layoutX="26.0" layoutY="25.0" prefWidth="75.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="30.0" />
+            <Button layoutX="20.0" layoutY="60.0" mnemonicParsing="false" onAction="#actionChoosePixel" prefWidth="100.0" text="Wybierz piksel" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="60.0" />
+            <ColorPicker fx:id="colorPickerPixel" layoutX="161.0" layoutY="31.0" prefWidth="100.0" promptText="Wybierz kolor" AnchorPane.leftAnchor="190.0" AnchorPane.topAnchor="0.0" />
+            <Button layoutX="178.0" layoutY="60.0" mnemonicParsing="false" onAction="#actionChoosePixelColor" prefWidth="100.0" text="Kolor z ekranu" AnchorPane.leftAnchor="190.0" AnchorPane.topAnchor="30.0" />
+            <CheckBox fx:id="checkboxPixelColor" layoutX="129.0" layoutY="14.0" mnemonicParsing="false" text="Piksel i kolor" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="5.0" />
+            <TextField fx:id="textFieldColorDiff" layoutX="240.0" layoutY="60.0" prefWidth="50.0" text="20" />
+            <Label layoutX="171.0" layoutY="64.0" text="Dop. różnica:" AnchorPane.leftAnchor="165.0" AnchorPane.topAnchor="65.0" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="anchorPaneImageSelector" prefHeight="120.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="55.0">
+         <children>
+            <Label layoutY="6.0" text="X1:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
+            <Label layoutY="34.0" text="Y1:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="35.0" />
+            <TextField fx:id="textFieldX1" layoutX="21.0" layoutY="2.0" prefWidth="55.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="0.0" />
+            <TextField fx:id="textFieldY1" layoutX="21.0" layoutY="30.0" prefWidth="55.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="30.0" />
+            <Label layoutX="15.0" layoutY="15.0" text="X2:" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="5.0" />
+            <Label layoutX="15.0" layoutY="45.0" text="Y2:" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="35.0" />
+            <TextField fx:id="textFieldX2" layoutX="35.0" layoutY="10.0" prefWidth="55.0" AnchorPane.leftAnchor="105.0" AnchorPane.topAnchor="0.0" />
+            <TextField fx:id="textFieldY2" layoutX="35.0" layoutY="40.0" prefWidth="55.0" AnchorPane.leftAnchor="105.0" AnchorPane.topAnchor="30.0" />
+            <Button layoutX="46.0" layoutY="60.0" mnemonicParsing="false" onAction="#actionSelectImageArea" prefWidth="135.0" text="Zaznacz obszar" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="60.0" />
+             <ComboBox fx:id="comboBoxSearchedImage" layoutX="160.0" layoutY="2.0" onAction="#actionSelectImage" onMousePressed="#actionRefreshImages" prefWidth="125.0" promptText="Szukany obraz" AnchorPane.leftAnchor="170.0" AnchorPane.topAnchor="30.0" />
+            <Button layoutX="170.0" mnemonicParsing="false" onAction="#actionSelectDirectory" prefWidth="125.0" text="Wybierz folder" AnchorPane.leftAnchor="170.0" AnchorPane.topAnchor="0.0" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="anchorPaneKeyboard" prefHeight="40.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="175.0">
+         <children>
+            <Label text="Klawisz" AnchorPane.leftAnchor="75.0" AnchorPane.topAnchor="0.0" />
+            <TextField fx:id="textFieldKey" editable="false" AnchorPane.leftAnchor="75.0" AnchorPane.topAnchor="15.0" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="anchorPaneMouse" prefHeight="40.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="175.0">
+         <children>
+            <Label text="X:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="0.0" />
+            <TextField fx:id="textFieldMouseClickX" prefWidth="50.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="15.0" />
+            <Label text="Y:" AnchorPane.leftAnchor="60.0" AnchorPane.topAnchor="0.0" />
+            <TextField fx:id="textFieldMouseClickY" prefWidth="50.0" AnchorPane.leftAnchor="60.0" AnchorPane.topAnchor="15.0" />
+            <Button mnemonicParsing="false" onAction="#actionSelectMouseClickPixel" prefWidth="60.0" text="Wybierz" AnchorPane.leftAnchor="115.0" AnchorPane.topAnchor="15.0" />
+            <Button fx:id="buttonMouseButton" mnemonicParsing="false" prefWidth="110.0" text="Przycisk myszy" AnchorPane.leftAnchor="180.0" AnchorPane.topAnchor="15.0" />
+         </children>
+      </AnchorPane>
+      <Label layoutX="76.0" layoutY="14.0" text="Liczba akcji" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
+      <TextField fx:id="textFieldActionsNumber" layoutX="76.0" layoutY="31.0" prefWidth="90.0" text="0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="20.0" />
+      <Label layoutX="76.0" layoutY="62.0" text="Okres akcji" AnchorPane.leftAnchor="105.0" AnchorPane.topAnchor="5.0" />
+      <TextField fx:id="textFieldActionPeriod" layoutX="76.0" layoutY="88.0" prefWidth="90.0" text="1000" AnchorPane.leftAnchor="105.0" AnchorPane.topAnchor="20.0" />
+      <Label layoutX="75.0" layoutY="85.0" text="Losowość" AnchorPane.leftAnchor="205.0" AnchorPane.topAnchor="5.0" />
+      <TextField fx:id="textFieldPeriodRandomizer" layoutX="76.0" layoutY="102.0" prefWidth="90.0" text="0" AnchorPane.leftAnchor="205.0" AnchorPane.topAnchor="20.0" />
+      <Button fx:id="buttonOk" layoutX="77.0" layoutY="161.0" mnemonicParsing="false" onAction="#actionOk" prefWidth="75.0" text="Ok" AnchorPane.leftAnchor="60.0" AnchorPane.topAnchor="220.0" />
+      <Button fx:id="buttonCancel" layoutX="173.0" layoutY="161.0" mnemonicParsing="false" onAction="#actionCancel" prefWidth="75.0" text="Cancel" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="220.0" />
+   </children>
+</AnchorPane>
