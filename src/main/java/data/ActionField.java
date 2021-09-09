@@ -26,6 +26,7 @@ import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.beans.Transient;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -33,24 +34,27 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ActionField implements Serializable {
-    private AnchorPane anchorPane;
-    private TextArea textAreaDescription;
-    private CheckBox checkboxActive;
-    private ComboBox<String> comboBoxAction;
-    private ComboBox<String> comboBoxTrigger;
-    private Button buttonConfigure;
-    private Line line;
+    private transient AnchorPane anchorPane;
+    private transient TextArea textAreaDescription;
+    private transient CheckBox checkboxActive;
+    private transient ComboBox<String> comboBoxAction;
+    private transient ComboBox<String> comboBoxTrigger;
+    private transient Button buttonConfigure;
+    private transient Line line;
 
     private int actionsNumber = 0;
     private int actionPeriod = 1000;
     private int periodRandomizer = 0;
+    private String action;
+    private String trigger;
+    private String description;
     private KeyCode keyCode;
     private MouseButton mouseButton;
-    private Point2D pointPixelColor;
-    private Point2D pointRectangle1;
-    private Point2D pointRectangle2;
-    private Color desiredPixelColor;
-    private Color currentPixelColor;
+    private final Point pointPixelColor = new Point();
+    private final Point pointRectangle1 = new Point();
+    private final Point pointRectangle2 = new Point();
+    private final SerializableColor desiredPixelColor = new SerializableColor();
+    private final SerializableColor currentPixelColor = new SerializableColor();
     private double minColorR;
     private double maxColorR;
     private double minColorG;
@@ -60,13 +64,13 @@ public class ActionField implements Serializable {
     private int colorDiff;
     private File directoryImages;
     private File selectedImage;
-    private Point2D pointMouseClick;
-
-    private Point2D previousMousePosition;
-    private final Robot robot = new Robot();
-    private Thread lifeCycle;
+    private final Point pointMouseClick = new Point();
+    private final Point previousMousePosition = new Point();
+    private transient Robot robot;
+    private transient Thread lifeCycle;
     private boolean alive;
     private BufferedImage imageToSearch;
+    private String mode;
     private boolean mouseMode;
     private boolean keyboardMode;
     private boolean colorMode;
@@ -77,6 +81,10 @@ public class ActionField implements Serializable {
     private final List<String> triggers = Arrays.asList("Czas", "Kolor piksela", "Kolor piksela różny od", "Obecność obrazu w polu", "Brak obecności obrazu w polu");
 
     public ActionField(){
+        prepareControl();
+    }
+
+    public void prepareControl(){
         anchorPane = new AnchorPane();
         anchorPane.setPrefHeight(160.0);
         anchorPane.setPrefWidth(400.0);
@@ -90,6 +98,7 @@ public class ActionField implements Serializable {
         textAreaDescription.setWrapText(true);
         AnchorPane.setLeftAnchor(textAreaDescription, 10.0);
         AnchorPane.setTopAnchor(textAreaDescription, 45.0);
+        textAreaDescription.setText(description);
 
         checkboxActive = new CheckBox();
         checkboxActive.setLayoutX(316.0);
@@ -108,6 +117,7 @@ public class ActionField implements Serializable {
         AnchorPane.setTopAnchor(comboBoxAction, 10.0);
         ObservableList<String> comboBoxActionItems = comboBoxAction.getItems();
         comboBoxActionItems.addAll(actions);
+        if(mode != null)comboBoxAction.getSelectionModel().select(mode.split("\\|")[0]);
 
         comboBoxTrigger = new ComboBox<>();
         comboBoxTrigger.setLayoutX(119.0);
@@ -118,6 +128,7 @@ public class ActionField implements Serializable {
         AnchorPane.setTopAnchor(comboBoxTrigger, 10.0);
         ObservableList<String> comboBoxTriggerItems = comboBoxTrigger.getItems();
         comboBoxTriggerItems.addAll(triggers);
+        if(mode != null)comboBoxTrigger.getSelectionModel().select(mode.split("\\|")[1]);
 
         buttonConfigure = new Button();
         buttonConfigure.setLayoutX(210.0);
@@ -127,7 +138,7 @@ public class ActionField implements Serializable {
         buttonConfigure.setText("Konfiguruj");
         AnchorPane.setLeftAnchor(buttonConfigure, 210.0);
         AnchorPane.setTopAnchor(buttonConfigure, 10.0);
-        buttonConfigure.setOnAction(actionEvent -> configureAction(comboBoxAction.getSelectionModel().getSelectedItem(), comboBoxTrigger.getSelectionModel().getSelectedItem()));
+        buttonConfigure.setOnAction(actionEvent -> configureAction());
 
         line = new Line();
         line.setEndX(400.0);
@@ -144,37 +155,18 @@ public class ActionField implements Serializable {
         children.add(buttonConfigure);
         children.add(line);
 
-//        this.buttonKey.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
-//            keyCode = keyEvent.getCode();
-//            labelKey.setText(keyCode.getName());
-//            labelKey.requestFocus();
-//            textFieldX.setText(null);
-//            textFieldY.setText(null);
-//        });
-//        this.buttonMouse.addEventFilter(MouseEvent.MOUSE_CLICKED, keyEvent -> {
-//            Stage stage = new Stage();
-//            stage.initStyle(StageStyle.UNDECORATED);
-//            Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-//            stage.setScene(new Scene(new Pane(), dimension.width, dimension.height));
-//            stage.setOpacity(0.2);
-//            stage.addEventFilter(MouseEvent.MOUSE_CLICKED, keyEvent2 -> {
-//                textFieldX.setText(keyEvent2.getScreenX() + "");
-//                textFieldY.setText(keyEvent2.getScreenY() + "");
-//                mouseButton = keyEvent2.getButton();
-//                labelKey.setText(keyEvent2.getButton().name());
-//                stage.close();
-//            });
-//            stage.show();
-//        });
+        robot = new Robot();
     }
 
-    private void configureAction(String action, String trigger){
+    private void configureAction(){
+        action = comboBoxAction.getSelectionModel().getSelectedItem();
+        trigger = comboBoxTrigger.getSelectionModel().getSelectedItem();
         if(action == null || trigger == null){
             textAreaDescription.setText("Może najpierw wybierz akcje i trigger tępaku jebany :/");
             return;
         }
 
-        String mode = action + "|" + trigger;
+        mode = action + "|" + trigger;
         mouseMode = false;
         keyboardMode = false;
         colorMode = false;
@@ -183,6 +175,54 @@ public class ActionField implements Serializable {
 
         if(actionsNumber == 0) actionsNumber = Integer.MAX_VALUE;
 
+        switch (mode) {
+            case "Klik myszą|Czas" -> {
+                mouseMode = true;
+            }
+            case "Klik myszą|Kolor piksela" -> {
+                mouseMode = true;
+                colorMode = true;
+            }
+            case "Klik myszą|Kolor piksela różny od" -> {
+                mouseMode = true;
+                colorMode = true;
+                reverseMode = true;
+            }
+            case "Klik myszą|Obecność obrazu w polu" -> {
+                mouseMode = true;
+                imageMode = true;
+            }
+            case "Klik myszą|Brak obecności obrazu w polu" -> {
+                mouseMode = true;
+                imageMode = true;
+                reverseMode = true;
+            }
+            case "Klik klawiaturą|Czas" -> {
+                keyboardMode = true;
+            }
+            case "Klik klawiaturą|Kolor piksela" -> {
+                keyboardMode = true;
+                colorMode = true;
+            }
+            case "Klik klawiaturą|Kolor piksela różny od" -> {
+                keyboardMode = true;
+                colorMode = true;
+                reverseMode = true;
+            }
+            case "Klik klawiaturą|Obecność obrazu w polu" -> {
+                keyboardMode = true;
+                imageMode = true;
+            }
+            case "Klik klawiaturą|Brak obecności obrazu w polu" -> {
+                keyboardMode = true;
+                imageMode = true;
+                reverseMode = true;
+            }
+        }
+        loadConfigurationPanel(mode);
+    }
+
+    public void configureThread(){
         switch (mode) {
             case "Klik myszą|Czas"                              -> configureMouseTime();
             case "Klik myszą|Kolor piksela"                     -> configureMousePixelEqualColor();
@@ -195,18 +235,16 @@ public class ActionField implements Serializable {
             case "Klik klawiaturą|Obecność obrazu w polu"       -> configureKeyboardImagePresence();
             case "Klik klawiaturą|Brak obecności obrazu w polu" -> configureKeyboardImageAbsence();
         }
-        loadConfigurationPanel(mode);
     }
 
     private void configureMouseTime() {
-        mouseMode = true;
         lifeCycle = new Thread(() -> {
             for (int j = 0; j < getActionsNumber() && alive; j++) {
                 Platform.runLater(() -> {
-                    previousMousePosition = robot.getMousePosition();
-                    robot.mouseMove(pointMouseClick);
+                    previousMousePosition.setPoint(robot.getMousePosition());
+                    robot.mouseMove(pointMouseClick.getPoint());
                     robot.mouseClick(mouseButton);
-                    robot.mouseMove(previousMousePosition);
+                    robot.mouseMove(previousMousePosition.getPoint());
                 });
                 waitForNextAction();
             }
@@ -214,17 +252,15 @@ public class ActionField implements Serializable {
     }
 
     private void configureMousePixelEqualColor() {
-        mouseMode = true;
-        colorMode = true;
         lifeCycle = new Thread(() -> {
             for (int j = 0; j < getActionsNumber() && alive; j++) {
-                currentPixelColor = robot.getPixelColor(pointPixelColor);
+                currentPixelColor.setColor(robot.getPixelColor(pointPixelColor.getPoint()));
                 if(colorsWithDiffEqual()) {
                     Platform.runLater(() -> {
-                        previousMousePosition = robot.getMousePosition();
-                        robot.mouseMove(pointMouseClick);
+                        previousMousePosition.setPoint(robot.getMousePosition());
+                        robot.mouseMove(pointMouseClick.getPoint());
                         robot.mouseClick(mouseButton);
-                        robot.mouseMove(previousMousePosition);
+                        robot.mouseMove(previousMousePosition.getPoint());
                     });
                 }
                 waitForNextAction();
@@ -233,18 +269,15 @@ public class ActionField implements Serializable {
     }
 
     private void configureMousePixelUnequalColor() {
-        mouseMode = true;
-        colorMode = true;
-        reverseMode = true;
         lifeCycle = new Thread(() -> {
             for (int j = 0; j < getActionsNumber() && alive; j++) {
-                currentPixelColor = robot.getPixelColor(pointPixelColor);
+                currentPixelColor.setColor(robot.getPixelColor(pointPixelColor.getPoint()));
                 if(!colorsWithDiffEqual()) {
                     Platform.runLater(() -> {
-                        previousMousePosition = robot.getMousePosition();
-                        robot.mouseMove(pointMouseClick);
+                        previousMousePosition.setPoint(robot.getMousePosition());
+                        robot.mouseMove(pointMouseClick.getPoint());
                         robot.mouseClick(mouseButton);
-                        robot.mouseMove(previousMousePosition);
+                        robot.mouseMove(previousMousePosition.getPoint());
                     });
                 }
                 waitForNextAction();
@@ -253,18 +286,16 @@ public class ActionField implements Serializable {
     }
 
     private void configureMouseImagePresence() {
-        mouseMode = true;
-        imageMode = true;
         lifeCycle = new Thread(() -> {
             try {
                 imageToSearch = ImageIO.read(selectedImage);
                 for (int h = 0; h < actionsNumber && alive; h++) {
                     if(findImage()){
                         Platform.runLater(() -> {
-                            previousMousePosition = robot.getMousePosition();
-                            robot.mouseMove(pointMouseClick);
+                            previousMousePosition.setPoint(robot.getMousePosition());
+                            robot.mouseMove(pointMouseClick.getPoint());
                             robot.mouseClick(mouseButton);
-                            robot.mouseMove(previousMousePosition);
+                            robot.mouseMove(previousMousePosition.getPoint());
 
                         });
                     }
@@ -277,22 +308,17 @@ public class ActionField implements Serializable {
     }
 
     private void configureMouseImageAbsence() {
-        mouseMode = true;
-        imageMode = true;
-        reverseMode = true;
         lifeCycle = new Thread(() -> {
             try {
                 imageToSearch = ImageIO.read(selectedImage);
                 for (int h = 0; h < actionsNumber && alive; h++) {
                     Platform.runLater(() -> {
                         if(!findImage()){
-                            previousMousePosition = robot.getMousePosition();
-                            robot.mouseMove(pointMouseClick);
+                            previousMousePosition.setPoint(robot.getMousePosition());
+                            robot.mouseMove(pointMouseClick.getPoint());
                             robot.mouseClick(mouseButton);
-                            robot.mouseMove(previousMousePosition);
-                            System.out.println("mouse image absence click");
+                            robot.mouseMove(previousMousePosition.getPoint());
                         } else{
-                            System.out.println("mouse image absence no click");
                         }
                     });
 
@@ -305,7 +331,6 @@ public class ActionField implements Serializable {
     }
 
     private void configureKeyboardTime() {
-        keyboardMode = true;
         lifeCycle = new Thread(() -> {
             for (int j = 0; j < getActionsNumber() && alive; j++) {
                 Platform.runLater(() -> {
@@ -323,15 +348,11 @@ public class ActionField implements Serializable {
     }
 
     private void configureKeyboardPixelEqualColor() {
-        System.out.println("keyboard pixel color equal conf");
-        keyboardMode = true;
-        colorMode = true;
         lifeCycle = new Thread(() -> {
-            System.out.println("keyboard pixel color equal starts");
             calculateColors();
             for (int j = 0; j < getActionsNumber() && alive; j++) {
                 Platform.runLater(() -> {
-                    currentPixelColor = robot.getPixelColor(pointPixelColor);
+                    currentPixelColor.setColor(robot.getPixelColor(pointPixelColor.getPoint()));
                     if(colorsWithDiffEqual()) {
                         robot.keyPress(keyCode);
                         try {
@@ -340,9 +361,6 @@ public class ActionField implements Serializable {
                             e.printStackTrace();
                         }
                         robot.keyRelease(keyCode);
-                        System.out.println("keyboard pixel color equal click");
-                    } else {
-                        System.out.println("keyboard color equal no click");
                     }
                 });
                 waitForNextAction();
@@ -351,17 +369,11 @@ public class ActionField implements Serializable {
     }
 
     private void configureKeyboardPixelUnequalColor() {
-        System.out.println("keyboard pixel color unequal conf");
-        keyboardMode = true;
-        colorMode = true;
-        reverseMode = true;
         lifeCycle = new Thread(() -> {
-            System.out.println("keyboard pixel color unequal starts " + getActionsNumber() + " " + alive);
             calculateColors();
             for (int j = 0; j < getActionsNumber() && alive; j++) {
-                System.out.println("inside keyboard pixel color unequal loop " + j);
                 Platform.runLater(() -> {
-                    currentPixelColor = robot.getPixelColor(pointPixelColor);
+                    currentPixelColor.setColor(robot.getPixelColor(pointPixelColor.getPoint()));
                     if(!colorsWithDiffEqual()) {
                         robot.keyPress(keyCode);
                         try {
@@ -370,9 +382,6 @@ public class ActionField implements Serializable {
                             e.printStackTrace();
                         }
                         robot.keyRelease(keyCode);
-                        System.out.println("keyboard pixel color unequal click");
-                    } else {
-                        System.out.println("keyboard color unequal no click");
                     }
                 });
                 waitForNextAction();
@@ -381,8 +390,6 @@ public class ActionField implements Serializable {
     }
 
     private void configureKeyboardImagePresence() {
-        keyboardMode = true;
-        imageMode = true;
         lifeCycle = new Thread(() -> {
             try {
                 imageToSearch = ImageIO.read(selectedImage);
@@ -407,9 +414,6 @@ public class ActionField implements Serializable {
     }
 
     private void configureKeyboardImageAbsence() {
-        keyboardMode = true;
-        imageMode = true;
-        reverseMode = true;
         lifeCycle = new Thread(() -> {
             try {
                 imageToSearch = ImageIO.read(selectedImage);
@@ -527,14 +531,10 @@ public class ActionField implements Serializable {
         } else if(keyboardMode){
             description += keyCode.name() + " na klawiaturze.\n";
         }
-//        description += " będzie klikany co " + textFieldActionPeriod.getText() + " +/-" + textFieldPeriodRandomizer.getText() + "ms," +
-//                (textFieldActionsNumber.getText().equals("0") ? " nieskonczenie wiele" : textFieldActionsNumber.getText()) +
-//                " razy.\n";
-//
         if(colorMode){
             description += "Kiedy: gdy piksel (" + pointPixelColor.getX() + ", " +pointPixelColor.getY() + ") będzie miał kolor";
             if(reverseMode) description += " inny niż";
-            description += desiredPixelColor + " +/- " + colorDiff;
+            description += " " + desiredPixelColor.getColorDescription() + " +/- " + colorDiff + ".\n";
         } else if(imageMode){
             description += "Kiedy: gdy w obszarze prostokąta między (" + pointRectangle1.getX() + ", " + pointRectangle1.getY() +
                     ") a (" + pointRectangle2.getX() + ", " + pointRectangle2.getY() + ")";
@@ -543,13 +543,14 @@ public class ActionField implements Serializable {
         }
         description += "Akcja zostanie wykonana co " + actionPeriod + " +/- " + periodRandomizer + "ms, " + actionsNumber + " razy.";
 
+        this.description = description;
         textAreaDescription.setText(description);
     }
 
     private boolean colorsWithDiffEqual(){
-        if(!(currentPixelColor.getRed() < maxColorR && currentPixelColor.getRed() > minColorR)) return false;
-        if(!(currentPixelColor.getGreen() < maxColorG && currentPixelColor.getGreen() > minColorG)) return false;
-        return currentPixelColor.getBlue() < maxColorB && currentPixelColor.getBlue() > minColorB;
+        if(!(currentPixelColor.getRed() <= maxColorR && currentPixelColor.getRed() >= minColorR)) return false;
+        if(!(currentPixelColor.getGreen() <= maxColorG && currentPixelColor.getGreen() >= minColorG)) return false;
+        return currentPixelColor.getBlue() <= maxColorB && currentPixelColor.getBlue() >= minColorB;
     }
 
     private void calculateColors(){
@@ -621,35 +622,35 @@ public class ActionField implements Serializable {
     }
 
     public Point2D getPointPixelColor() {
-        return pointPixelColor;
+        return pointPixelColor.getPoint();
     }
 
     public void setPointPixelColor(Point2D pointPixelColor) {
-        this.pointPixelColor = pointPixelColor;
+        this.pointPixelColor.setPoint(pointPixelColor);
     }
 
     public Color getDesiredPixelColor() {
-        return desiredPixelColor;
+        return desiredPixelColor.getColor();
     }
 
     public void setDesiredPixelColor(Color desiredPixelColor) {
-        this.desiredPixelColor = desiredPixelColor;
+        this.desiredPixelColor.setColor(desiredPixelColor);
     }
 
     public Point2D getPointRectangle1() {
-        return pointRectangle1;
+        return pointRectangle1.getPoint();
     }
 
     public void setPointRectangle1(Point2D pointRectangle1) {
-        this.pointRectangle1 = pointRectangle1;
+        this.pointRectangle1.setPoint(pointRectangle1);
     }
 
     public Point2D getPointRectangle2() {
-        return pointRectangle2;
+        return pointRectangle2.getPoint();
     }
 
     public void setPointRectangle2(Point2D pointRectangle2) {
-        this.pointRectangle2 = pointRectangle2;
+        this.pointRectangle2.setPoint(pointRectangle2);
     }
 
     public File getDirectoryImages() {
@@ -677,11 +678,11 @@ public class ActionField implements Serializable {
     }
 
     public Point2D getPointMouseClick() {
-        return pointMouseClick;
+        return pointMouseClick.getPoint();
     }
 
     public void setPointMouseClick(Point2D pointMouseClick) {
-        this.pointMouseClick = pointMouseClick;
+        this.pointMouseClick.setPoint(pointMouseClick);
     }
 
     public CheckBox getCheckboxActive() {

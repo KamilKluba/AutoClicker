@@ -7,10 +7,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +31,7 @@ public class MainWindowController {
         ActionField actionField = new ActionField();
         actionFields.add(actionField);
         vBoxActions.getChildren().add(actionField.getControl());
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Auto clicker", "*.aclkr"));
     }
 
     public void start(){
@@ -44,6 +42,7 @@ public class MainWindowController {
         buttonStart.setDisable(true);
         buttonStop.setDisable(false);
         for(ActionField a : actionFields){
+            a.configureThread();
             a.getCheckboxActive().setDisable(true);
             a.getComboBoxAction().setDisable(true);
             a.getComboBoxTrigger().setDisable(true);
@@ -81,8 +80,7 @@ public class MainWindowController {
     public void actionSave(){
         try {
             fileChooser.setTitle("Wybierz miejsce do zapisu");
-            fileChooser.setInitialFileName("Clicker 1");
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Auto clicker", "*.aclkr"));
+            fileChooser.setInitialFileName("Clicker schema");
             File file = fileChooser.showSaveDialog(stage);
             if(file != null) {
                 if(!file.exists()) {
@@ -90,6 +88,7 @@ public class MainWindowController {
                 }
                 FileOutputStream fos = new FileOutputStream(file);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeInt(actionFields.size());
                 for(ActionField a : actionFields){
                     oos.writeObject(a);
                 }
@@ -102,7 +101,23 @@ public class MainWindowController {
     }
 
     public void actionRead(){
+        try{
+            File file = fileChooser.showOpenDialog(stage);
+            FileInputStream fis = new FileInputStream(file);
+            ObjectInputStream ois = new ObjectInputStream(fis);
 
+            actionFields.clear();
+            vBoxActions.getChildren().clear();
+            int objectsToReadNumber = ois.readInt();
+            while(objectsToReadNumber-- != 0){
+                ActionField actionField = (ActionField)ois.readObject();
+                actionField.prepareControl();
+                vBoxActions.getChildren().add(actionField.getControl());
+                actionFields.add(actionField);
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setStage(Stage stage){
