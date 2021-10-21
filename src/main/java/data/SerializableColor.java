@@ -1,13 +1,13 @@
 package data;
 
+import java.awt.*;
 import java.io.Serializable;
-import javafx.scene.paint.Color;
 
 public class SerializableColor implements Serializable {
-    private double red;
-    private double green;
-    private double blue;
-    private double alpha;
+    private int red;
+    private int green;
+    private int blue;
+    private int alpha;
 
     public SerializableColor() {
     }
@@ -16,10 +16,10 @@ public class SerializableColor implements Serializable {
         this.red = color.getRed();
         this.green = color.getGreen();
         this.blue = color.getBlue();
-        this.alpha = color.getOpacity();
+        this.alpha = color.getAlpha();
     }
 
-    public SerializableColor(double red, double green, double blue, double alpha) {
+    public SerializableColor(int red, int green, int blue, int alpha) {
         this.red = red;
         this.green = green;
         this.blue = blue;
@@ -30,7 +30,7 @@ public class SerializableColor implements Serializable {
         this.red = color.getRed();
         this.green = color.getGreen();
         this.blue = color.getBlue();
-        this.alpha = color.getOpacity();
+        this.alpha = color.getAlpha();
     }
 
     public Color getColor() {
@@ -38,38 +38,38 @@ public class SerializableColor implements Serializable {
     }
 
     public String getColorDescription(){
-        return "(" + (int)(255 * red) + ", " + (int)(255 * green) + ", " + (int)(255 * blue) + ")";
+        return "(" + red + ", " + green + ", " + blue + ")";
     }
 
-    public double getRed() {
+    public int getRed() {
         return red;
     }
 
-    public void setRed(double red) {
+    public void setRed(int red) {
         this.red = red;
     }
 
-    public double getGreen() {
+    public int getGreen() {
         return green;
     }
 
-    public void setGreen(double green) {
+    public void setGreen(int green) {
         this.green = green;
     }
 
-    public double getBlue() {
+    public int getBlue() {
         return blue;
     }
 
-    public void setBlue(double blue) {
+    public void setBlue(int blue) {
         this.blue = blue;
     }
 
-    public double getAlpha() {
+    public int getAlpha() {
         return alpha;
     }
 
-    public void setAlpha(double alpha) {
+    public void setAlpha(int alpha) {
         this.alpha = alpha;
     }
 }

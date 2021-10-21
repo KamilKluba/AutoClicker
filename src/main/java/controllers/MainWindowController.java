@@ -8,9 +8,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class MainWindowController {
     @FXML private VBox vBoxActions;
@@ -42,7 +40,7 @@ public class MainWindowController {
         buttonStart.setDisable(true);
         buttonStop.setDisable(false);
         for(ActionField a : actionFields){
-            a.configureThread();
+            a.recreateService();
             a.getCheckboxActive().setDisable(true);
             a.getComboBoxAction().setDisable(true);
             a.getComboBoxTrigger().setDisable(true);
@@ -75,6 +73,8 @@ public class MainWindowController {
 
     public void removeAction(){
         vBoxActions.getChildren().remove(vBoxActions.getChildren().size() - 1);
+        ActionField actionField = actionFields.remove(actionFields.size() - 1);
+        actionField.kill();
     }
 
     public void actionSave(){

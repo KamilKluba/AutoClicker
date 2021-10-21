@@ -7,30 +7,30 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="415.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainWindowController">
-   <bottom>
-      <AnchorPane prefHeight="35.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button fx:id="buttonStart" mnemonicParsing="false" onAction="#start" prefWidth="70.0" text="Start" AnchorPane.leftAnchor="265.0" AnchorPane.topAnchor="5.0" />
-            <Button fx:id="buttonStop" disable="true" mnemonicParsing="false" onAction="#stop" prefWidth="70.0" text="Stop" AnchorPane.leftAnchor="340.0" AnchorPane.topAnchor="5.0" />
-            <Button fx:id="buttonAddAction" layoutX="14.0" layoutY="2.0" mnemonicParsing="false" onAction="#addAction" prefWidth="25.0" text="+" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
-            <Button fx:id="buttonRemoveAction" layoutX="66.0" layoutY="4.0" mnemonicParsing="false" onAction="#removeAction" prefHeight="25.0" prefWidth="25.0" text="-" AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="5.0" />
-            <Button fx:id="buttonSave" layoutX="85.0" layoutY="5.0" mnemonicParsing="false" onAction="#actionSave" prefWidth="70.0" text="Zapisz" AnchorPane.leftAnchor="90.0" />
-            <Button fx:id="buttonRead" layoutX="149.0" layoutY="5.0" mnemonicParsing="false" onAction="#actionRead" prefWidth="70.0" text="Wczytaj" AnchorPane.leftAnchor="165.0" />
-         </children>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-      </AnchorPane>
-   </bottom>
-   <center>
-      <ScrollPane hbarPolicy="NEVER" vbarPolicy="ALWAYS" BorderPane.alignment="CENTER">
-         <content>
-            <VBox fx:id="vBoxActions" />
-         </content>
-      </ScrollPane>
-   </center>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="415.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainWindowController">
+    <bottom>
+        <AnchorPane prefHeight="35.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="buttonStart" mnemonicParsing="false" onAction="#start" prefWidth="70.0" text="Start" AnchorPane.leftAnchor="265.0" AnchorPane.topAnchor="5.0" />
+                <Button fx:id="buttonStop" disable="true" mnemonicParsing="false" onAction="#stop" prefWidth="70.0" text="Stop" AnchorPane.leftAnchor="340.0" AnchorPane.topAnchor="5.0" />
+                <Button fx:id="buttonAddAction" layoutX="14.0" layoutY="2.0" mnemonicParsing="false" onAction="#addAction" prefWidth="25.0" text="+" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                <Button fx:id="buttonRemoveAction" layoutX="66.0" layoutY="4.0" mnemonicParsing="false" onAction="#removeAction" prefHeight="25.0" prefWidth="25.0" text="-" AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="5.0" />
+                <Button fx:id="buttonSave" layoutX="85.0" layoutY="5.0" mnemonicParsing="false" onAction="#actionSave" prefWidth="70.0" text="Zapisz" AnchorPane.leftAnchor="90.0" />
+                <Button fx:id="buttonRead" layoutX="149.0" layoutY="5.0" mnemonicParsing="false" onAction="#actionRead" prefWidth="70.0" text="Wczytaj" AnchorPane.leftAnchor="165.0" />
+            </children>
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+        </AnchorPane>
+    </bottom>
+    <center>
+        <ScrollPane hbarPolicy="NEVER" vbarPolicy="ALWAYS" BorderPane.alignment="CENTER">
+            <content>
+                <VBox fx:id="vBoxActions" />
+            </content>
+        </ScrollPane>
+    </center>
 </BorderPane>

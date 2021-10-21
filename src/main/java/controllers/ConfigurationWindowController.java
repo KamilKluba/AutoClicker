@@ -1,31 +1,25 @@
 package controllers;
 
 import data.ActionField;
-import javafx.collections.ObservableList;
+import data.Modes;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.robot.Robot;
 import javafx.scene.shape.Line;
-import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.awt.*;
 import java.io.File;
-import java.io.FileFilter;
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -33,6 +27,7 @@ public class ConfigurationWindowController {
     @FXML TextField textFieldActionsNumber;
     @FXML TextField textFieldActionPeriod;
     @FXML TextField textFieldPeriodRandomizer;
+    @FXML Button buttonFileTrigger;
     @FXML AnchorPane anchorPanePixelColor;
     @FXML TextField textFieldColorPixelX;
     @FXML TextField textFieldColorPixelY;
@@ -45,7 +40,6 @@ public class ConfigurationWindowController {
     @FXML TextField textFieldY1;
     @FXML TextField textFieldX2;
     @FXML TextField textFieldY2;
-    @FXML ComboBox<File> comboBoxSearchedImage;
 
     @FXML AnchorPane anchorPaneKeyboard;
     @FXML TextField textFieldKey;
@@ -55,24 +49,26 @@ public class ConfigurationWindowController {
     @FXML TextField textFieldMouseClickY;
     @FXML Button buttonMouseButton;
 
+    @FXML AnchorPane anchorPaneSound;
+    @FXML Button buttonFileAction;
+
     @FXML Button buttonOk;
     @FXML Button buttonCancel;
 
+    private String action;
+    private String trigger;
     private ActionField actionField;
     private Stage stage;
     private KeyCode keyCode;
-    private MouseButton mouseButton;
-    private final DirectoryChooser directoryChooser = new DirectoryChooser();
-    private File directoryImages;
-    private File selectedImage;
-    private boolean colorMode;
-    private boolean imageMode;
-    private boolean keyboardMode;
-    private boolean mouseMode;
+    private int mouseButton;
+    private final FileChooser fileTriggerChooser = new FileChooser();
+    private final FileChooser fileActionChooser = new FileChooser();
+    private File fileTrigger;
+    private File fileAction;
 
     public void initialize(){
         buttonMouseButton.addEventFilter(MouseEvent.MOUSE_CLICKED, keyEvent -> {
-            mouseButton = keyEvent.getButton();
+            mouseButton = (int)Math.pow(2, keyEvent.getButton().ordinal() + 9);
             buttonMouseButton.setText(keyEvent.getButton().name());
         });
 
@@ -80,10 +76,18 @@ public class ConfigurationWindowController {
             keyCode = keyEvent.getCode();
             textFieldKey.setText(keyEvent.getCode().getName());
         });
+        fileTriggerChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All image files", "*.jpg", "*.jpeg", "*.jpe", "*.jfif", "*.png", "*.bmp", "*.dib"));
+        fileTriggerChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JPEG", "*.jpg", "*.jpeg", "*.jpe", "*.jfif"));
+        fileTriggerChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG", "*.png"));
+        fileTriggerChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Bit map", "*.bmp", "*.dib"));
+
+        fileActionChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All music files", "*.mp3", "*.wav"));
+        fileActionChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("MP3", "*.mp3"));
+        fileActionChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("WAV", "*.wav"));
     }
 
     public void actionOk(){
-        if(keyCode == null && mouseButton == null) {
+        if(action.equals(Modes.KEYBOARD) && keyCode == null) {
             return;
         }
         try {
@@ -93,25 +97,25 @@ public class ConfigurationWindowController {
             actionField.setActionsNumber(actionsNumber);
             actionField.setActionPeriod(actionsPeriod);
             actionField.setPeriodRandomizer(periodRandomizer);
-            if(colorMode){
-                double colorPixelX = Double.parseDouble(textFieldColorPixelX.getText());
-                double colorPixelY = Double.parseDouble(textFieldColorPixelY.getText());
+            if(trigger.equals(Modes.PIXEL_COLOR) || trigger.equals(Modes.PIXEL_COLOR_DIFF)){
+                int colorPixelX = Integer.parseInt(textFieldColorPixelX.getText());
+                int colorPixelY = Integer.parseInt(textFieldColorPixelY.getText());
                 int colorDiff = Integer.parseInt(textFieldColorDiff.getText());
-                actionField.setPointPixelColor(new Point2D(colorPixelX, colorPixelY));
+                actionField.setPointPixelColor(new java.awt.Point(colorPixelX, colorPixelY));
                 actionField.setColorDiff(colorDiff);
             }
-            if(imageMode){
-                double rectangleX1 = Double.parseDouble(textFieldX1.getText());
-                double rectangleY1 = Double.parseDouble(textFieldY1.getText());
-                double rectangleX2 = Double.parseDouble(textFieldX2.getText());
-                double rectangleY2 = Double.parseDouble(textFieldY2.getText());
-                actionField.setPointRectangle1(new Point2D(rectangleX1, rectangleY1));
-                actionField.setPointRectangle2(new Point2D(rectangleX2, rectangleY2));
+            if(trigger.equals(Modes.IMAGE_PRESENCE) || trigger.equals(Modes.IMAGE_ABSENCE)){
+                int rectangleX1 = Integer.parseInt(textFieldX1.getText());
+                int rectangleY1 = Integer.parseInt(textFieldY1.getText());
+                int rectangleX2 = Integer.parseInt(textFieldX2.getText());
+                int rectangleY2 = Integer.parseInt(textFieldY2.getText());
+                actionField.setPointRectangle1(new java.awt.Point(rectangleX1, rectangleY1));
+                actionField.setPointRectangle2(new java.awt.Point(rectangleX2, rectangleY2));
             }
-            if(mouseMode){
-                double mouseClickX = Double.parseDouble(textFieldMouseClickX.getText());
-                double mouseClickY = Double.parseDouble(textFieldMouseClickY.getText());
-                actionField.setPointMouseClick(new Point2D(mouseClickX, mouseClickY));
+            if(action.equals(Modes.MOUSE)){
+                int mouseClickX = Integer.parseInt(textFieldMouseClickX.getText());
+                int mouseClickY = Integer.parseInt(textFieldMouseClickY.getText());
+                actionField.setPointMouseClick(new java.awt.Point(mouseClickX, mouseClickY));
             }
         } catch(NumberFormatException e){
             e.printStackTrace();
@@ -120,9 +124,10 @@ public class ConfigurationWindowController {
 
         actionField.setKeyCode(keyCode);
         actionField.setMouseButton(mouseButton);
-        actionField.setDesiredPixelColor(colorPickerPixel.getValue());
-        actionField.setDirectoryImages(directoryImages);
-        actionField.setSelectedImage(selectedImage);
+        actionField.setDesiredPixelColor(new java.awt.Color((float)colorPickerPixel.getValue().getRed(), (float)colorPickerPixel.getValue().getGreen(),
+                (float)colorPickerPixel.getValue().getBlue(), (float)colorPickerPixel.getValue().getOpacity()));
+        actionField.setFileAction(fileAction);
+        actionField.setFileTrigger(fileTrigger);
         stage.close();
     }
 
@@ -139,17 +144,17 @@ public class ConfigurationWindowController {
     }
 
     public void actionSelectImageArea(){
-        AtomicReference<Double> pressX = new AtomicReference<>((double) 0);
-        AtomicReference<Double> pressY = new AtomicReference<>((double) 0);
+        AtomicReference<Integer> pressX = new AtomicReference<>(0);
+        AtomicReference<Integer> pressY = new AtomicReference<>(0);
         Stage stage = new Stage(StageStyle.TRANSPARENT);
         stage.setOpacity(0.3);
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
         Pane pane = new Pane();
         try {
-            double x1 = Double.parseDouble(textFieldX1.getText());
-            double y1 = Double.parseDouble(textFieldY1.getText()) + 13;
-            double x2 = Double.parseDouble(textFieldX2.getText());
-            double y2 = Double.parseDouble(textFieldY2.getText()) + 13;
+            int x1 = Integer.parseInt(textFieldX1.getText());
+            int y1 = Integer.parseInt(textFieldY1.getText()) + 13;
+            int x2 = Integer.parseInt(textFieldX2.getText());
+            int y2 = Integer.parseInt(textFieldY2.getText()) + 13;
 
             pane.getChildren().clear();
             pane.getChildren().add(new Line(x1, y1, x1, y2));
@@ -161,26 +166,26 @@ public class ConfigurationWindowController {
         scene.setCursor(Cursor.CROSSHAIR);
         stage.setScene(scene);
         stage.addEventFilter(MouseEvent.MOUSE_PRESSED, keyEvent -> {
-            pressX.set(keyEvent.getScreenX());
-            pressY.set(keyEvent.getSceneY());
-            textFieldX1.setText(String.valueOf(keyEvent.getScreenX()));
-            textFieldY1.setText(String.valueOf(keyEvent.getScreenY()));
+            pressX.set((int)keyEvent.getScreenX());
+            pressY.set((int)keyEvent.getSceneY());
+            textFieldX1.setText(String.valueOf((int)keyEvent.getScreenX()));
+            textFieldY1.setText(String.valueOf((int)keyEvent.getScreenY()));
         });
         stage.addEventFilter(MouseEvent.MOUSE_DRAGGED, keyEvent -> {
             pane.getChildren().clear();
-            pane.getChildren().add(new Line(pressX.get(), pressY.get(), keyEvent.getScreenX(), pressY.get()));
-            pane.getChildren().add(new Line(pressX.get(), pressY.get(), pressX.get(), keyEvent.getSceneY()));
-            pane.getChildren().add(new Line(keyEvent.getScreenX(), pressY.get(), keyEvent.getScreenX(), keyEvent.getSceneY()));
-            pane.getChildren().add(new Line(pressX.get(), keyEvent.getSceneY(), keyEvent.getScreenX(), keyEvent.getSceneY()));
-            textFieldX2.setText(String.valueOf(keyEvent.getScreenX()));
-            textFieldY2.setText(String.valueOf(keyEvent.getScreenY()));
+            pane.getChildren().add(new Line(pressX.get(), pressY.get(), (int)keyEvent.getScreenX(), pressY.get()));
+            pane.getChildren().add(new Line(pressX.get(), pressY.get(), pressX.get(), (int)keyEvent.getSceneY()));
+            pane.getChildren().add(new Line((int)keyEvent.getScreenX(), pressY.get(), (int)keyEvent.getScreenX(), (int)keyEvent.getSceneY()));
+            pane.getChildren().add(new Line(pressX.get(), (int)keyEvent.getSceneY(), (int)keyEvent.getScreenX(), (int)keyEvent.getSceneY()));
+            textFieldX2.setText(String.valueOf((int)keyEvent.getScreenX()));
+            textFieldY2.setText(String.valueOf((int)keyEvent.getScreenY()));
         });
         stage.addEventFilter(KeyEvent.KEY_RELEASED, keyEvent -> {
             try {
-                double x1 = Double.parseDouble(textFieldX1.getText());
-                double y1 = Double.parseDouble(textFieldY1.getText());
-                double x2 = Double.parseDouble(textFieldX2.getText());
-                double y2 = Double.parseDouble(textFieldY2.getText());
+                int x1 = Integer.parseInt(textFieldX1.getText());
+                int y1 = Integer.parseInt(textFieldY1.getText());
+                int x2 = Integer.parseInt(textFieldX2.getText());
+                int y2 = Integer.parseInt(textFieldY2.getText());
                 if(x1 > x2){
                     textFieldX1.setText(String.valueOf(x2));
                     textFieldX2.setText(String.valueOf(x1));
@@ -198,18 +203,22 @@ public class ConfigurationWindowController {
         stage.show();
     }
 
-    public void actionSelectDirectory(){
-        directoryImages = directoryChooser.showDialog(stage);
-        directoryChooser.setInitialDirectory(directoryImages);
-        comboBoxSearchedImage.getSelectionModel().clearSelection();
+    public void actionSelectFileTrigger(){
+        File chosenFile;
+        if((chosenFile = fileTriggerChooser.showOpenDialog(stage)) != null) {
+            fileTrigger = chosenFile;
+            fileTriggerChooser.setInitialDirectory(fileTrigger.toPath().getParent().toFile());
+            buttonFileTrigger.setText(fileTrigger.getName());
+        }
     }
 
-    public void actionRefreshImages(){
-        fillImagesCombo();
-    }
-
-    public void actionSelectImage(){
-        selectedImage = comboBoxSearchedImage.getSelectionModel().getSelectedItem();
+    public void actionSelectFileAction(){
+        File chosenFile;
+        if((chosenFile = fileActionChooser.showOpenDialog(stage)) != null){
+            fileAction = chosenFile;
+            fileActionChooser.setInitialDirectory(fileAction.toPath().getParent().toFile());
+            buttonFileAction.setText(fileAction.getName());
+        }
     }
 
     public void actionSelectMouseClickPixel() {
@@ -222,8 +231,8 @@ public class ConfigurationWindowController {
         stage.setScene(scene);
         stage.addEventFilter(MouseEvent.MOUSE_CLICKED, keyEvent -> {
             stage.close();
-            textFieldMouseClickX.setText(String.valueOf(keyEvent.getScreenX()));
-            textFieldMouseClickY.setText(String.valueOf(keyEvent.getScreenY()));
+            textFieldMouseClickX.setText(String.valueOf((int)keyEvent.getScreenX()));
+            textFieldMouseClickY.setText(String.valueOf((int)keyEvent.getScreenY()));
         });
         stage.show();
     }
@@ -237,81 +246,76 @@ public class ConfigurationWindowController {
         this.textFieldActionsNumber.setText(String.valueOf(actionField.getActionsNumber()));
         this.textFieldActionPeriod.setText(String.valueOf(actionField.getActionPeriod()));
         this.textFieldPeriodRandomizer.setText(String.valueOf(actionField.getPeriodRandomizer()));
-        this.colorPickerPixel.setValue(actionField.getDesiredPixelColor());
+        this.colorPickerPixel.setValue(new Color((double)actionField.getDesiredPixelColor().getRed() / 255, (double)actionField.getDesiredPixelColor().getBlue() / 255,
+                                                (double)actionField.getDesiredPixelColor().getBlue() / 255, (double)actionField.getDesiredPixelColor().getAlpha() / 255));
         this.textFieldColorDiff.setText(String.valueOf(actionField.getColorDiff()));
-        this.directoryImages = actionField.getDirectoryImages();
+        this.mouseButton = actionField.getMouseButton();
+        this.buttonMouseButton.setText(String.valueOf(mouseButton));
         if(actionField.getPointPixelColor() != null) {
-            this.textFieldColorPixelX.setText(String.valueOf(actionField.getPointPixelColor().getX()));
-            this.textFieldColorPixelY.setText(String.valueOf(actionField.getPointPixelColor().getY()));
+            this.textFieldColorPixelX.setText(String.valueOf(actionField.getPointPixelColor().x));
+            this.textFieldColorPixelY.setText(String.valueOf(actionField.getPointPixelColor().y));
         }
         if(actionField.getPointRectangle1() != null) {
-            this.textFieldX1.setText(String.valueOf(actionField.getPointRectangle1().getX()));
-            this.textFieldY1.setText(String.valueOf(actionField.getPointRectangle1().getY()));
+            this.textFieldX1.setText(String.valueOf(actionField.getPointRectangle1().x));
+            this.textFieldY1.setText(String.valueOf(actionField.getPointRectangle1().y));
         }
         if(actionField.getPointRectangle2() != null) {
-            this.textFieldX2.setText(String.valueOf(actionField.getPointRectangle2().getX()));
-            this.textFieldY2.setText(String.valueOf(actionField.getPointRectangle2().getY()));
+            this.textFieldX2.setText(String.valueOf(actionField.getPointRectangle2().x));
+            this.textFieldY2.setText(String.valueOf(actionField.getPointRectangle2().y));
         }
         if(actionField.getPointMouseClick() != null) {
-            this.textFieldMouseClickX.setText(String.valueOf(actionField.getPointMouseClick().getX()));
-            this.textFieldMouseClickY.setText(String.valueOf(actionField.getPointMouseClick().getY()));
+            this.textFieldMouseClickX.setText(String.valueOf(actionField.getPointMouseClick().x));
+            this.textFieldMouseClickY.setText(String.valueOf(actionField.getPointMouseClick().y));
         }
         if(actionField.getKeyCode() != null) {
             this.textFieldKey.setText(actionField.getKeyCode().getName());
             this.keyCode = actionField.getKeyCode();
         }
-        if(actionField.getMouseButton() != null){
-            this.textFieldKey.setText(actionField.getMouseButton().name());
-            this.mouseButton = actionField.getMouseButton();
+        if(actionField.getFileTrigger() != null){
+            this.fileTrigger = actionField.getFileTrigger();
+            this.buttonFileTrigger.setText(fileTrigger.getName());
+            fileTriggerChooser.setInitialDirectory(fileTrigger.toPath().getParent().toFile());
         }
-        fillImagesCombo();
-        this.selectedImage = actionField.getSelectedImage();
-        comboBoxSearchedImage.getSelectionModel().select(this.selectedImage);
+        if(actionField.getFileAction() != null){
+            this.fileAction = actionField.getFileAction();
+            this.buttonFileAction.setText(fileAction.getName());
+            fileActionChooser.setInitialDirectory(fileAction.toPath().getParent().toFile());
+        }
     }
 
-    public void selectMode(String mode){
+    public void selectMode(String action, String trigger){
+        this.action = action;
+        this.trigger = trigger;
         anchorPanePixelColor.setVisible(false);
         anchorPaneImageSelector.setVisible(false);
         anchorPaneMouse.setVisible(false);
         anchorPaneKeyboard.setVisible(false);
+        anchorPaneSound.setVisible(false);
 
-        colorMode = false;
-        imageMode = false;
-        keyboardMode = false;
-        mouseMode = false;
+        switch(action){
+            case Modes.MOUSE -> {
+                anchorPaneMouse.setVisible(true);
+            }
+            case Modes.KEYBOARD -> {
+                anchorPaneKeyboard.setVisible(true);
+            }
+            case Modes.SOUND -> {
+                anchorPaneSound.setVisible(true);
+            }
+            case Modes.SHUTDOWN -> {
 
-        switch (mode) {
-            case "Klik myszą|Czas" -> {
-                mouseMode = true;
-                anchorPaneMouse.setVisible(true);
             }
-            case "Klik myszą|Kolor piksela", "Klik myszą|Kolor piksela różny od" -> {
-                mouseMode = true;
-                colorMode = true;
+        }
+
+        switch(trigger){
+            case Modes.TIME -> {
+
+            }
+            case Modes.PIXEL_COLOR, Modes.PIXEL_COLOR_DIFF -> {
                 anchorPanePixelColor.setVisible(true);
-                anchorPaneMouse.setVisible(true);
             }
-            case "Klik myszą|Obecność obrazu w polu", "Klik myszą|Brak obecności obrazu w polu" -> {
-                mouseMode = true;
-                imageMode = true;
+            case Modes.IMAGE_PRESENCE, Modes.IMAGE_ABSENCE -> {
                 anchorPaneImageSelector.setVisible(true);
-                anchorPaneMouse.setVisible(true);
-            }
-            case "Klik klawiaturą|Czas" -> {
-                keyboardMode = true;
-                anchorPaneKeyboard.setVisible(true);
-            }
-            case "Klik klawiaturą|Kolor piksela", "Klik klawiaturą|Kolor piksela różny od" -> {
-                keyboardMode = true;
-                colorMode = true;
-                anchorPanePixelColor.setVisible(true);
-                anchorPaneKeyboard.setVisible(true);
-            }
-            case "Klik klawiaturą|Obecność obrazu w polu", "Klik klawiaturą|Brak obecności obrazu w polu" -> {
-                keyboardMode = true;
-                imageMode = true;
-                anchorPaneImageSelector.setVisible(true);
-                anchorPaneKeyboard.setVisible(true);
             }
         }
     }
@@ -329,25 +333,14 @@ public class ConfigurationWindowController {
             boolean doBoth = checkboxPixelColor.isSelected();
             if(mode.equals("color") || doBoth) {
                 Robot robot = new Robot();
-                Color color = robot.getPixelColor(keyEvent.getScreenX(), keyEvent.getScreenY());
+                Color color = robot.getPixelColor((int)keyEvent.getScreenX(), (int)keyEvent.getScreenY());
                 colorPickerPixel.setValue(color);
             }
             if(mode.equals("pixel") || doBoth) {
-                textFieldColorPixelX.setText(String.valueOf(keyEvent.getScreenX()));
-                textFieldColorPixelY.setText(String.valueOf(keyEvent.getScreenY()));
+                textFieldColorPixelX.setText(String.valueOf((int)keyEvent.getScreenX()));
+                textFieldColorPixelY.setText(String.valueOf((int)keyEvent.getScreenY()));
             }
         });
         stage.show();
-    }
-
-    private void fillImagesCombo(){
-        if(directoryImages == null) return;
-        directoryChooser.setInitialDirectory(directoryImages);
-        FileFilter fileFilter = pathname -> pathname.getName().endsWith("jpg") || pathname.getName().endsWith("png");
-        File[] files = directoryImages.listFiles(fileFilter);
-        ObservableList<File> comboBoxSearchedImageItems = comboBoxSearchedImage.getItems();
-        comboBoxSearchedImageItems.clear();
-        assert files != null;
-        comboBoxSearchedImageItems.addAll(Arrays.asList(files));
     }
 }
